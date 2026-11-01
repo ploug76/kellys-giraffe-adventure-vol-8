@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#0a3a5a">
+<title>Kelly's Giraffe Adventure Vol. 8: Ocean Giraffe: Pip's Deep Dive</title><meta name="description" content="Kelly&#x27;s giraffe hits the beach! Team up with Pip the sea turtle to wade through tide pools, swim through coral caves and bonk 4 silly sea bosses across 8 painted levels to win back Peter&#x27;s birthday present from Captain Crab."><meta property="og:type" content="website"><meta property="og:title" content="Kelly&#x27;s Giraffe Adventure Vol. 8: Ocean Giraffe: Pip&#x27;s Deep Dive"><meta property="og:description" content="Kelly&#x27;s giraffe hits the beach! Team up with Pip the sea turtle to wade through tide pools, swim through coral caves and bonk 4 silly sea bosses across 8 painted levels to win back Peter&#x27;s birthday present from Captain Crab."><meta property="og:url" content="https://ploug76.github.io/kellys-giraffe-adventure-vol-8/"><meta property="og:image" content="https://ploug76.github.io/kellys-giraffe-adventure-vol-8/cover.png?v=4"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Kelly&#x27;s Giraffe Adventure Vol. 8: Ocean Giraffe: Pip&#x27;s Deep Dive"><meta name="twitter:image" content="https://ploug76.github.io/kellys-giraffe-adventure-vol-8/cover.png?v=4"><meta name="robots" content="noindex">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Giraffe Adventure 4">
+<link rel="preload" href="fonts/lilita.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="style.css?v=4">
+</head><body>
+<div id="bgart" hidden></div>
+<canvas id="cv" aria-label="Kelly's Giraffe Adventure Vol. 8 game"></canvas><div id="sp"></div>
+<div id="hud"><button id="bMute" class="hb" type="button" aria-label="Sound on or off">🔊</button><button id="bPause" class="hb" type="button" aria-label="Pause">II</button></div>
+<div id="pad">
+ <div id="swipeHint">SWIPE &amp; HOLD ANYWHERE TO MOVE<br>SWIPE UP TO JUMP</div>
+ <button id="bDive" class="big" type="button" aria-label="Dive (when riding Pip)">DIVE</button>
+ <button id="bJump" class="big" type="button" aria-label="Jump">JUMP</button>
+ <button id="bAct" class="big" type="button" aria-label="Action">ACTION</button>
+</div>
+<div id="ui"></div>
+<div id="toast" role="status" aria-live="polite"></div>
+<div id="load"><div class="ld">GIRAFFE ADVENTURE<small>Vol. 8 · Pip's Deep Dive</small></div><div class="bar"><i></i></div></div>
+<script>window.VERSION='4';window.addEventListener('error',e=>{(window.__ERR=window.__ERR||[]).push(String(e.message))});</script>
+<script src="game.js?v=4"></script>
+<script>if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{})</script>
+<script>;(function(){/*swup v1: check for updates on every open*/if(window.__swup)return;window.__swup=1;var S=navigator.serviceWorker;if(!S||!/^https?:$/.test(location.protocol))return;var ARC=0,BUSY=0,had=!!S.controller,inp=0,K='swup:'+location.pathname;['pointerdown','keydown','touchstart','wheel'].forEach(function(t){addEventListener(t,function(){inp=1},{capture:true,passive:true})});function chk(){try{S.getRegistration().then(function(r){if(r)r.update().catch(function(){})},function(){})}catch(e){}}addEventListener('load',function(){setTimeout(chk,800)});document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible'){if(ARC)inp=0;chk()}});addEventListener('pageshow',function(e){if(e.persisted){if(ARC)inp=0;chk()}});function pill(){if(document.getElementById('swupPill'))return;var b=document.createElement('button');b.id='swupPill';b.type='button';b.textContent='Update ready \u2013 tap to refresh';b.style.cssText='position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 8px);transform:translateX(-50%);z-index:2147483647;padding:8px 14px;border:0;border-radius:999px;background:#ffd23f;color:#111;font:600 14px system-ui,sans-serif;box-shadow:0 2px 10px rgba(0,0,0,.45);cursor:pointer';b.addEventListener('click',function(){location.reload()});(document.body||document.documentElement).appendChild(b)}S.addEventListener('controllerchange',function(){if(!had){had=true;return}var n=Date.now(),l=0,busy=false;try{l=+sessionStorage.getItem(K)||0}catch(e){}try{busy=!!(BUSY&&BUSY())}catch(e){}if(inp||busy||n-l<15000||document.visibilityState!=='visible'){pill();return}try{sessionStorage.setItem(K,String(n))}catch(e){}location.reload()})})();if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).catch(()=>{})</script>
+</body></html>
