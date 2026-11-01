@@ -123,11 +123,12 @@ let PADR={act:null,jump:null,dive:null};
 function layoutPad(){const pad=$('pad'),ba=$('bAct'),bj=$('bJump'),bd=$('bDive'),hint=$('swipeHint');if(!pad)return;
  let s,top0,ph;if(portrait){top0=gameH;ph=H-top0;s=Math.round(clamp(Math.min(W*0.19,ph*0.27),58,76))}else{top0=0;ph=H;s=Math.round(clamp(H*0.165,52,68))}
  pad.style.top=top0+'px';pad.style.height=ph+'px';
- const d=Math.round((s+8)/Math.SQRT2),bot=(portrait?Math.round(clamp(ph*0.07,12,26)):10)+SAFE.b,right=(portrait?14:12)+SAFE.r;
+ /* Peter Oct 31 11:26 PM: whole pad raised, ACTION + JUMP nearly touching (3px gap), DIVE on top centred, lifted to clear them (4px gap) */
+ const d=(s+3)/2,v=Math.ceil(Math.sqrt((s+4)*(s+4)-d*d)),bot=(portrait?Math.round(clamp(ph*0.07,12,26))+16:22)+SAFE.b,right=(portrait?14:12)+SAFE.r;
  const cy=ph-bot-s/2,cx=W-right-d-s/2;
  const at=(el,x,y)=>Object.assign(el.style,{width:s+'px',height:s+'px',left:Math.round(x-s/2)+'px',top:Math.round(y-s/2)+'px',right:'',bottom:'',fontSize:Math.round(s*(el.id==='bAct'?0.215:0.27))+'px'});
  /* tight N64 diamond (Peter Oct 31): left = ACTION (green), right = JUMP (orange), top = DIVE, bottom slot empty; ~8px between neighbours */
- at(ba,cx-d,cy);at(bj,cx+d,cy);at(bd,cx,cy-d);
+ at(ba,cx-d,cy);at(bj,cx+d,cy);at(bd,cx,cy-v);
  if(portrait){hint.style.display='';Object.assign(hint.style,{top:'12px',left:(14+SAFE.l)+'px',right:(right+d*2+s+10)+'px'})}else hint.style.display='none';
  requestAnimationFrame(()=>{const r=e=>{const b=e.getBoundingClientRect();return{x:b.left,y:b.top,w:b.width,h:b.height}};PADR.act=r(ba);PADR.jump=r(bj);PADR.dive=r(bd)})}
 addEventListener('resize',resize);addEventListener('orientationchange',()=>setTimeout(resize,120));
