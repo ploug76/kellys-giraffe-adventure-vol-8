@@ -337,7 +337,8 @@ function killPlayer(p,why){if(SIM){p.dead=1;return}if(p.dead)return;if(window.__
 function startAttack(p,k){p.atk=k==='kick'?0.32:k==='bonk'?0.22:0.2;p.atkK=k;p.atkHit=new Set();AU.fx(k==='kick'?'kick':k==='bonk'?'bonk':'punch');if(k==='kick'&&!p.onG)p.vy=Math.min(p.vy,-120)}
 function attackBox(p){const r=p.atkK==='kick'?56:p.atkK==='bonk'?54:40;if(p.mode==='swim')return{x:p.face>0?p.x+16:p.x-16-60,y:p.y-p.h+4,w:60,h:p.h};if(p.mode==='ride')return{x:p.face>0?p.x+10:p.x-10-r-20,y:p.y-p.h-6,w:r+20,h:56};return{x:p.face>0?p.x:p.x-r,y:p.y-p.h+10,w:r,h:44}}
 function ramBox(p){if(p.ramDy<0)return{x:p.x-34,y:p.y-p.h-30,w:68,h:70};return{x:p.face>0?p.x:p.x-80,y:p.y-p.h,w:80,h:p.h-10}}
-function nearHook(p){if(p.mode!=='ride'||p.swCd>0)return null;const hp=headPt(p);let best=null,bd=120;for(const h of G.L.hooks){const d=Math.hypot(h.x-hp.x,h.y-hp.y);if(d<bd&&h.y<p.y-20){bd=d;best=h}}return best}
+/* Peter Oct 31 11:11 PM: easy ring grab - ACTION anywhere near a ring grabs it, no aiming. Reach is measured from the head OR the body, any direction, ~1.7x the old head reach */
+const HOOK_R=205;function nearHook(p){if(p.mode!=='ride'||p.swCd>0)return null;const hp=headPt(p),cy=p.y-p.h*0.55;let best=null,bd=HOOK_R;for(const h of G.L.hooks){if(h===p.relH&&G.t-p.relAt<0.6)continue;const ry=h.y+30;const d=Math.min(Math.hypot(h.x-hp.x,ry-hp.y),Math.hypot(h.x-p.x,ry-cy),Math.hypot(h.x-p.x,h.y-cy));if(d<bd){bd=d;best=h}}return best}
 function tongueTarget(p){if(p.mode==='foot')return null;const hp=headPt(p);let best=null,bd=150;
  const test=(o,kind)=>{const dx=(o.x-hp.x)*p.face,dy=o.y-hp.y;if(dx<-20||dy>40)return;const d=Math.hypot(dx,dy);if(d<bd){bd=d;best={o,kind}}};
  for(const e of G.ents){if(e.dead)continue;if(e.k==='food')test(e,'food');else if(EDEF[e.k]&&EDEF[e.k].eat)test({x:e.x,y:e.y-e.h/2,e},'bug')}for(const s of G.L.stars)if(!s.got)test(s,'star');
@@ -348,8 +349,8 @@ function findLedge(p){if(p.mode!=='ride'||p.onG||p.swing||p.ledge||p.lgCd>0||p.p
 function startLedge(p,l){p.ledge={sx:p.x,sy:p.y,x:l.x,y:l.y,t:0};p.vx=p.vy=0;p.ram=0;p.pound=0;p.atk=0;AU.fx('grab');if(!SIM){dust(l.x,l.y,4);ftxt(l.x,l.y-p.h-14,'NECK GRAB!','#9ff0ff')}}
 function doAction(p){const now=G.t;const dbl=now-p.lastTap<0.3;p.lastTap=now;
  if(p.mode==='swim'){const tt=tongueTarget(p);if(tt&&!dbl){p.tng=0.3;p.tngT=tt;AU.fx('tongue');return}if(dbl){startRam(p,0);return}startAttack(p,'bonk');return}
+ if(p.swing)return;const hk=nearHook(p);if(hk){grabHook(p,hk);return}
  if(!p.onG){const lg=findLedge(p);if(lg){startLedge(p,lg);return}}
- if(p.swing)return;const hk=nearHook(p);if(hk&&!p.onG){grabHook(p,hk);return}
  const tt=tongueTarget(p);if(tt&&!dbl){p.tng=0.3;p.tngT=tt;AU.fx('tongue');return}
  if(!p.onG&&inp.D){startPound(p);return}
  if(inp.U){startRam(p,-1);return}
@@ -359,9 +360,9 @@ function doAction(p){const now=G.t;const dbl=now-p.lastTap<0.3;p.lastTap=now;
 function startRam(p,dy){if(p.ramCd>0||p.mode==='foot')return;if(p.mode==='swim'){p.ram=0.32;p.ramDy=0;p.ramDx=p.face;p.atk=0;p.ramHit=new Set();p.vx=p.face*520;AU.fx('ram');bubbles(p.x-p.face*30,p.y-30,8);return}p.ram=dy<0?0.24:0.3;p.ramDy=dy;p.ramDx=dy<0?0:p.face;p.atk=0;AU.fx('ram');p.ramHit=new Set();
  if(dy<0){p.vy=-780;p.vx*=0.4}else{p.vx=p.face*660;p.vy=Math.min(p.vy,0)}dust(p.x-p.face*20,p.y,5)}
 function startPound(p){p.pound=1;p.vy=950;p.vx*=0.2;p.ram=0;AU.fx('swing')}
-function grabHook(p,h){const hp=headPt(p);const dx=p.x-h.x,dy=(p.y-p.h*0.55)-h.y;const L=clamp(Math.hypot(dx,dy),70,120);
- p.swing={h,L,a:Math.atan2(dx,dy),av:(p.vx*Math.cos(Math.atan2(dx,dy))-p.vy*Math.sin(Math.atan2(dx,dy)))/L};p.ram=0;p.pound=0;AU.fx('grab');p.vy=0}
-function releaseSwing(p,jump){const s=p.swing;if(!s)return;const tv=s.av*s.L;p.vx=clamp(Math.cos(s.a)*tv,-560,560);p.vy=clamp(-Math.sin(s.a)*tv,-700,600)-(jump?330:0);p.swing=null;p.swCd=0.3;if(jump)AU.fx('jump');if(Math.abs(p.vx)>20)p.face=sgn(p.vx)}
+function grabHook(p,h){const dx=p.x-h.x,dy=(p.y-p.h*0.55)-h.y;const L=clamp(Math.hypot(dx,dy),70,120);const a=clamp(Math.atan2(dx,dy),-1.45,1.45);
+ p.swing={h,L,a,av:clamp((p.vx*Math.cos(a)-p.vy*Math.sin(a))/L,-5,5),tw:0,fx:p.x,fy:p.y};p.ram=0;p.pound=0;p.atk=0;p.ledge=null;AU.fx('grab');p.vy=0}
+function releaseSwing(p,jump){const s=p.swing;if(!s)return;p.relH=s.h;p.relAt=G.t;const tv=s.av*s.L;p.vx=clamp(Math.cos(s.a)*tv,-560,560);p.vy=clamp(-Math.sin(s.a)*tv,-700,600)-(jump?330:0);p.swing=null;p.swCd=0.3;if(jump)AU.fx('jump');if(Math.abs(p.vx)>20)p.face=sgn(p.vx)}
 function updatePlayer(p,dt){const C=PH[p.mode];p.anim+=dt;p.inv=Math.max(0,p.inv-dt);p.ramCd=Math.max(0,p.ramCd-dt);p.swCd=Math.max(0,p.swCd-dt);p.squash=Math.max(0,p.squash-dt*4);
  if(p.dead){p.vy+=GRAV*dt;p.y+=p.vy*dt;return}
  p.lgCd=Math.max(0,p.lgCd-dt);
@@ -373,9 +374,9 @@ function updatePlayer(p,dt){const C=PH[p.mode];p.anim+=dt;p.inv=Math.max(0,p.inv
  /* swing */
  if(p.swing){const s=p.swing;let acc=-(GRAV/s.L)*Math.sin(s.a);const pump=(inp.R?1:0)-(inp.L?1:0);acc+=pump*4.2*Math.cos(s.a)*(Math.abs(s.a)<1.1?1:0.2);
   s.av+=acc*dt;s.av*=(1-0.12*dt);s.av=clamp(s.av,-6,6);s.a+=s.av*dt;s.a=clamp(s.a,-1.45,1.45);
-  p.x=s.h.x+Math.sin(s.a)*s.L;p.y=s.h.y+Math.cos(s.a)*s.L+p.h*0.55;if(Math.abs(s.av)>0.3)p.face=sgn(s.av*Math.cos(s.a));
+  p.x=s.h.x+Math.sin(s.a)*s.L;p.y=s.h.y+Math.cos(s.a)*s.L+p.h*0.55;if(s.tw!==undefined&&s.tw<1){s.tw=Math.min(1,s.tw+dt/0.2);const e=1-Math.pow(1-s.tw,3);p.x=lerp(s.fx,p.x,e);p.y=lerp(s.fy,p.y,e)}if(Math.abs(s.av)>0.3)p.face=sgn(s.av*Math.cos(s.a));
   if(inp.jumpP||inp.actP&&G.t-p.lastTap>0.15){releaseSwing(p,inp.jumpP);p.lastTap=G.t}
-  else{const b=bx(p);if(solidAt(b)){releaseSwing(p,false);p.vx*=-0.3}}
+  else if(!(s.tw<1)){const b=bx(p);if(solidAt(b)){releaseSwing(p,false);p.vx*=-0.3}}
   if(p.swing&&Math.random()<0.1&&Math.abs(s.av)>2)AU.fx('swing');return}
  /* horizontal */
  const want=(inp.R?1:0)-(inp.L?1:0);const wade=tileAt(Math.floor(p.x/TS),Math.floor((p.y-4)/TS))===6,WS=wade?0.62:1;
